@@ -2,11 +2,12 @@ const { getDb } = require("../util/database");
 const mongodb = require("mongodb");
 
 class Product {
-  constructor(title, price, description, imageUrl) {
+  constructor(title, price, description, imageUrl, userId) {
     this.title = title;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
+    this.userId = userId;
   }
 
   save() {
@@ -39,6 +40,13 @@ class Product {
       .deleteOne({ _id: new mongodb.ObjectId(_id) })
       .then((result) => console.log(result))
       .catch((err) => console.log(err));
+  }
+
+  static findById(productId) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .findOne({ _id: new mongodb.ObjectId(productId) });
   }
 }
 

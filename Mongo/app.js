@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 var cors = require("cors");
 
+const PORT = 3000;
+
 const { mongoConnect } = require("./util/database");
 const app = express();
 app.use(cors());
@@ -15,19 +17,20 @@ const { routes: adminRoutes } = require("./routes/admin");
 const { routes: shopRoutes } = require("./routes/shop");
 const User = require("./models/user");
 
-app.use("/admin", adminRoutes);
-app.use("/shop", shopRoutes);
-
 app.use((req, res, next) => {
   User.findById("61e009ef0ec469c9b0a195bb")
     .then((user) => {
-      req.user = user;
+      const { name, email, cart, _id } = user;
+
+      req.user = new User(name, email, cart, _id);
       next();
     })
     .catch((err) => console.log(err));
-  next();
 });
 
+app.use("/admin", adminRoutes);
+app.use("/shop", shopRoutes);
+
 mongoConnect(() => {
-  app.listen(3000);
+  app.listen(PORT, () => console.log("Listening to port: " + PORT));
 });

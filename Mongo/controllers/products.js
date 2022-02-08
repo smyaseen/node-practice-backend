@@ -13,7 +13,13 @@ exports.getProducts = async (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
   const { title, description, price, imageUrl } = req.body;
-  const product = new Product(title, price, description, imageUrl);
+  const product = new Product(
+    title,
+    price,
+    description,
+    imageUrl,
+    req.user._id
+  );
 
   product
     .save()
